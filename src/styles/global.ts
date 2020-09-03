@@ -24,6 +24,10 @@ export default createGlobalStyle`
     height: 100vh;
   }
 
+  a {
+    text-decoration: none;
+  }
+
   body {
     background: #f2f2f2;
   }
@@ -43,6 +47,7 @@ export default createGlobalStyle`
   .container {
     width: 90vw;
     max-width: 700px;
+    padding-bottom: 1rem;
   }
 
   @media(min-width: 700px) {
