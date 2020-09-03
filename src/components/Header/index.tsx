@@ -2,9 +2,13 @@ import React from 'react';
 
 import { Container } from './styles';
 
-const Header: React.FC = () => {
+type Props = {
+  brand: 'honda' | 'volkswagen';
+}
+
+const Header: React.FC<Props> = ({ brand }) => {
   return (
-    <Container>
+    <Container brand={brand}>
       <h2>Simulador de Emplacamento</h2>
     </Container>
   )

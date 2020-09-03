@@ -1,9 +1,14 @@
 import styled from "styled-components";
 
-export const Container = styled.header`
+type HeaderProps = {
+  brand: "honda" | "volkswagen";
+};
+
+export const Container = styled.header<HeaderProps>`
   height: 15rem;
   width: 100%;
-  background: var(--color-vw-blue);
+  background: ${({ brand }) =>
+    brand === "volkswagen" ? "var(--color-vw-blue)" : "var(--color-honda-red)"};
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -12,5 +17,12 @@ export const Container = styled.header`
     margin-top: 3rem;
     color: #fff;
     font-size: 2.4rem;
+
+    @media(max-width: 700px) {
+      width: 90vw;
+      max-width: 700px;
+      margin-top: 1.6rem;
+      text-align: center;
+    }
   }
 `;
