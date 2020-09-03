@@ -11,7 +11,7 @@ const Input: React.FC<Props> = ({ name, label, ...rest }) => {
   return (
     <Container>
       <label htmlFor={name}>{label}</label>
-      <input type="text" id={name} autoComplete="off" {...rest} />
+      <input type="text" id={name} name={name} autoComplete="off" {...rest} />
     </Container>
   );
 };
