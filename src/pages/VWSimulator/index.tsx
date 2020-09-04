@@ -29,7 +29,7 @@ const VWSimulator: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <Header brand="volkswagen" />
       <div className="container">
         <CardContainer>
           <Card>
