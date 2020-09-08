@@ -1,11 +1,13 @@
 import React, { useState, ChangeEvent, useMemo } from "react";
 
+import formatValue from "../../utils/formatValue";
+import Constants from "./constants";
+
 import { Input, Select } from "../../components/Form";
 import Card from "../../components/Card";
 import Header from "../../components/Header";
 
-import { CardContainer } from "./styles";
-import formatValue from "../../utils/formatValue";
+import { CardContainer, CardFooter } from "./styles";
 
 const HondaSimulator: React.FC = () => {
   const vehicleTypes = [
@@ -29,14 +31,8 @@ const HondaSimulator: React.FC = () => {
   ];
 
   const [formData, setFormData] = useState({
-    insurance: 15,
-    detran_rate: 154,
-    inspection: 50,
-    plate: 120,
-    company_comission: 200,
-    forwarding_agent: 50,
     type_vehicle: 1,
-    nf_value: 0,
+    nf_value: 0.00,
     nf_month: 0,
   });
 
@@ -71,50 +67,58 @@ const HondaSimulator: React.FC = () => {
       [name]: value,
     });
 
+    const { nf_value, nf_month, type_vehicle } = data;
     const {
-      nf_value,
-      nf_month,
-      type_vehicle,
-      insurance,
-      detran_rate,
-      inspection,
-      plate,
-      company_comission,
-      forwarding_agent,
-    } = data;
+      ipva,
+      seguro,
+      taxa_detran,
+      vistoria,
+      placa,
+      despachante,
+      comissao_loja,
+    } = Constants;
 
-    const ipva = Number(type_vehicle) === 1 ? 0.025 : 0.03;
-    // const seguro = data.type_vehicle === 1 ? 0 : 15;
+    const ipvaPercent = Number(type_vehicle) === 1 ? ipva.cc199 : ipva.cc200;
+    const insurance =
+      Number(type_vehicle) === 1 ? seguro.normal : seguro.obrigatorio;
+
+
 
     const calculedLicensePlate =
-      ((nf_value * ipva) / 12) * nf_month +
+      ((nf_value * ipvaPercent) / 12) * nf_month +
       (insurance / 12) * nf_month +
-      detran_rate +
-      inspection +
-      plate +
-      company_comission +
-      forwarding_agent;
+      taxa_detran +
+      vistoria +
+      placa +
+      comissao_loja +
+      despachante;
 
     setLicensePlate(calculedLicensePlate);
 
     let tempInstallmentIpva = 0;
 
-    if (Number(type_vehicle) === 1 && ((nf_value * ipva) / 12) * nf_month >= 100) {
-      setInstallmentIpva((((nf_value * ipva) / 12) * nf_month) / 3);
-      tempInstallmentIpva = (((nf_value * ipva) / 12) * nf_month) / 3;
-    } else if (Number(type_vehicle) === 2 && ((nf_value * ipva) / 12) * nf_month >= 100) {
-      setInstallmentIpva((((nf_value * ipva) / 12) * nf_month) / 3);
-      tempInstallmentIpva = (((nf_value * ipva) / 12) * nf_month) / 3;
+    if (
+      Number(type_vehicle) === 1 &&
+      ((nf_value * ipvaPercent) / 12) * nf_month >= 100
+    ) {
+      setInstallmentIpva((((nf_value * ipvaPercent) / 12) * nf_month) / 3);
+      tempInstallmentIpva = (((nf_value * ipvaPercent) / 12) * nf_month) / 3;
+    } else if (
+      Number(type_vehicle) === 2 &&
+      ((nf_value * ipvaPercent) / 12) * nf_month >= 100
+    ) {
+      setInstallmentIpva((((nf_value * ipvaPercent) / 12) * nf_month) / 3);
+      tempInstallmentIpva = (((nf_value * ipvaPercent) / 12) * nf_month) / 3;
     } else {
       setInstallmentIpva(0);
     }
 
     if (tempInstallmentIpva > 0) {
       setTotalIpva(
-        (((nf_value * ipva) / 12) * nf_month) / 3 +
-          (insurance / 12) * nf_month +
-          inspection +
-          company_comission
+        (((nf_value * ipvaPercent) / 12) * nf_month) / 3 +
+          (seguro.obrigatorio / 12) * nf_month +
+          vistoria +
+          comissao_loja
       );
     } else {
       setTotalIpva(0);
@@ -133,15 +137,25 @@ const HondaSimulator: React.FC = () => {
           <Card>
             <header>IPVA</header>
             {installmentIpva > 0 && (
-              <>
-                <span>{`1ª parcela: ${installmentIpvaFormatted}`}</span>
-                <span>{`2ª parcela: ${installmentIpvaFormatted}`}</span>
-                <span>{`3ª parcela: ${installmentIpvaFormatted}`}</span>
-              </>
+              <div>
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <p key={index}>
+                    <span>{index + 1}ª parcela</span>
+                    <span>{installmentIpvaFormatted}</span>
+                  </p>
+                ))}
+              </div>
             )}
-            <strong>
-              {totalIpva > 0 ? totalIpvaFormatted : "Não parcela"}
-            </strong>
+            <CardFooter>
+              {totalIpva > 0 ? (
+                <>
+                  <span>Total parcelado</span>
+                  <strong>{totalIpvaFormatted}</strong>
+                </>
+              ) : (
+                <strong>Não parcela</strong>
+              )}
+            </CardFooter>
           </Card>
         </CardContainer>
         <form>
@@ -156,8 +170,8 @@ const HondaSimulator: React.FC = () => {
           <Input
             label="Valor da NF:"
             name="nf_value"
-            type="number"
             placeholder="R$ 0,00"
+            type="number"
             value={formData.nf_value}
             onChange={handleInputChange}
           />

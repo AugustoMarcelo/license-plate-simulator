@@ -44,10 +44,24 @@ export default createGlobalStyle`
     color: var(--color-text-base);
   }
 
+  body::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+    border-radius: 10px;
+  }
+
   .container {
     width: 90vw;
     max-width: 700px;
-    padding-bottom: 1rem;
+    padding-bottom: 2rem;
   }
 
   @media(min-width: 700px) {

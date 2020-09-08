@@ -12,3 +12,18 @@ export const CardContainer = styled.div`
     row-gap: 2rem;
   }
 `;
+
+export const CardFooter = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  span {
+    line-height: 1.6rem;
+  }
+
+  strong {
+    font-size: 2.4rem;
+    line-height: 2.4rem;
+  }
+`;
